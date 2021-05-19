@@ -45,10 +45,11 @@ public class SpDbconcApplication implements CommandLineRunner {
 		ab2.setCity("qatar");
 		ab2.setCountry("Dubai");
 
-		/*
-		 * addressRepository.save(ab); addressRepository.save(ab1);
-		 * addressRepository.save(ab2);
-		 */
+		
+		  addressRepository.save(ab); 
+		  addressRepository.save(ab1);
+		  addressRepository.save(ab2);
+		 
 
 		EmployeeEntity sc = new EmployeeEntity();
 		sc.setId(1L);

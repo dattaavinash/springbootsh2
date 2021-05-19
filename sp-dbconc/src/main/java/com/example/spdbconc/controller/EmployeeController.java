@@ -1,6 +1,9 @@
 package com.example.spdbconc.controller;
 
 import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +43,7 @@ class EmployeeController {
 	@GetMapping("/employee/{id}")
 	public ResponseEntity<EmployeeEntity> getEmployeeEntityById(@PathVariable long id) {
 		return ResponseEntity.ok().body(employeeServiceImpl.getEmployeeEntityById(id));
+		
 	}
 	
     /**
@@ -49,7 +53,7 @@ class EmployeeController {
      */
 	
 	@PostMapping("/employee")
-	public ResponseEntity<EmployeeEntity> createEmployeeEntity(@RequestBody EmployeeEntity employeeEntity) {
+	public ResponseEntity<EmployeeEntity> createEmployeeEntity(@Valid @RequestBody EmployeeEntity employeeEntity) {
 		return ResponseEntity.ok().body(this.employeeServiceImpl.createEmployeeEntity(employeeEntity));
 	}
     
@@ -62,7 +66,7 @@ class EmployeeController {
 	
 	@PutMapping("/employee/{id}")
 	public ResponseEntity<EmployeeEntity> updateEmployeeEntity(@PathVariable long id,
-			@RequestBody EmployeeEntity employeeEntity) {
+			@Valid @RequestBody EmployeeEntity employeeEntity) {
 		employeeEntity.setId(id);
 		return ResponseEntity.ok().body(this.employeeServiceImpl.updateEmployeeEntity(employeeEntity));
 	}

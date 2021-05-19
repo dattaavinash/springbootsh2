@@ -36,4 +36,40 @@ public class EmployeeRepositoryTest {
 		EmployeeEntity ee=eeOptional.get();
 		assertThat(ee.getId()).isEqualTo(23L);
 	}
+	
+	@Test
+	@DisplayName("testing when Id not found")
+	void testGetEmployeeEntityById_NotFound() {
+		Optional<EmployeeEntity> eeOptional=employeeRepository.findById(23L);
+		assertThat(eeOptional.isPresent()).isFalse();
+	}
+	
+	@Test
+	@Sql(scripts="classpath:create-test-data.sql", executionPhase=ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(scripts="classpath:cleanup-test-data.sql", executionPhase=ExecutionPhase.AFTER_TEST_METHOD)
+	@DisplayName("test Save Id")
+	void testSaveEmployeeEntity() {
+		EmployeeEntity employeeEntity =createEmployeeEntity();
+		employeeRepository.save(employeeEntity);
+		Optional<EmployeeEntity> eeOptional=employeeRepository.findById(22l);
+		assertThat(eeOptional.isPresent()).isTrue();
+	}
+	
+	private EmployeeEntity createEmployeeEntity() {
+		EmployeeEntity ee = new EmployeeEntity(22L,"tcs","ram",null);
+		return ee;
+	}
+	
+	/*
+	 * @Test
+	 * 
+	 * @Sql(scripts="classpath:create-test-data.sql",
+	 * executionPhase=ExecutionPhase.BEFORE_TEST_METHOD)
+	 * 
+	 * @Sql(scripts="classpath:cleanup-test-data.sql",
+	 * executionPhase=ExecutionPhase.AFTER_TEST_METHOD)
+	 * 
+	 * @DisplayName("test update Id") void testUpdateEmployeeEntity() {
+	 * employeeRepository.updateEmployeeEntity() }
+	 */
 }

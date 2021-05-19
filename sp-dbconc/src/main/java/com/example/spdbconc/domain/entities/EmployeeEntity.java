@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 /*
  * created table for Employee
  */
@@ -15,8 +17,14 @@ public class EmployeeEntity {
 	@Id
 	@Column(name = "EmployeeId")
 	private Long id;
+	
+	@NotNull
+	@Size(min = 2,message="Name atleast should have 2 characters")
 	@Column(name = "EmployeeName")
 	private String name;
+	
+	@NotNull
+	@Size(min = 2,message="Company atleast should have 2 characters")
 	@Column(name = "EmployeeCompany")
 	private String company;
 
