@@ -12,74 +12,117 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.spdbconc.domain.entities.AddressEntity;
 import com.example.spdbconc.domain.entities.EmployeeEntity;
-import com.example.spdbconc.service.EmployeeServiceImpl;
+import com.example.spdbconc.domain.entities.ProjectEntity;
+import com.example.spdbconc.service.EmployeeService;
 
 /**
  * RESTful web services using Spring MVC.
  * 
  */
 @RestController
+@RequestMapping("/employees")
 class EmployeeController {
 
-	private EmployeeServiceImpl employeeServiceImpl;
+	private EmployeeService employeeService;
 
-	public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
-		this.employeeServiceImpl = employeeServiceImpl;
+	public EmployeeController(EmployeeService employeeService) {
+		this.employeeService = employeeService;
 	}
 
 	/**
+	 * Create Employee
 	 * 
-	 * GET method 
+	 * @param employeeEntity create new subordinate resources
+	 */
+	@PostMapping
+	public ResponseEntity<EmployeeEntity> createEmployee(@Valid @RequestBody EmployeeEntity employeeEntity) {
+		return new ResponseEntity<>(employeeService.createEmployee(employeeEntity), HttpStatus.CREATED);
+
+	}
+
+	/**
+	 * Retrieves Employee
+	 * 
 	 * @return data from a server at the specified resource
 	 */
-	
-	@GetMapping("/employee")
-	public ResponseEntity<List<EmployeeEntity>> getEmployeeEntity() {
-		return ResponseEntity.ok().body(employeeServiceImpl.getEmployeeEntity());
+	@GetMapping
+	public ResponseEntity<List<EmployeeEntity>> getEmployee() {
+		return ResponseEntity.ok().body(employeeService.getEmployee());
 	}
 
-	@GetMapping("/employee/{id}")
-	public ResponseEntity<EmployeeEntity> getEmployeeEntityById(@PathVariable long id) {
-		return ResponseEntity.ok().body(employeeServiceImpl.getEmployeeEntityById(id));
-		
-	}
-	
-    /**
-     * 
-     * @param employeeEntity
-     * create new subordinate resources
-     */
-	
-	@PostMapping("/employee")
-	public ResponseEntity<EmployeeEntity> createEmployeeEntity(@Valid @RequestBody EmployeeEntity employeeEntity) {
-		return ResponseEntity.ok().body(this.employeeServiceImpl.createEmployeeEntity(employeeEntity));
-	}
-    
 	/**
+	 * Retrieves Employee by Employee Id
+	 * 
+	 * @return data from a server at the specified resource
+	 */
+	@GetMapping("/{id}")
+	public ResponseEntity<EmployeeEntity> getEmployeeById(@PathVariable long id) {
+		return ResponseEntity.ok().body(employeeService.getEmployeeById(id));
+
+	}
+
+	/**
+	 * Updates Employee by Employee Id
 	 * 
 	 * @param id
-	 * @param employeeEntity
-	 * call when you have to modify a single resource
+	 * @param employeeEntity call when you have to modify a single resource
 	 */
-	
-	@PutMapping("/employee/{id}")
-	public ResponseEntity<EmployeeEntity> updateEmployeeEntity(@PathVariable long id,
+	@PutMapping("/{id}")
+	public ResponseEntity<EmployeeEntity> updateEmployee(@PathVariable long id,
 			@Valid @RequestBody EmployeeEntity employeeEntity) {
 		employeeEntity.setId(id);
-		return ResponseEntity.ok().body(this.employeeServiceImpl.updateEmployeeEntity(employeeEntity));
+		return ResponseEntity.ok().body(this.employeeService.updateEmployee(employeeEntity));
 	}
-    
+
 	/**
+	 * Deletes Employee by Id
 	 * 
-	 * @param id
-	 * The HTTP DELETE method is used to delete a resource from the server
+	 * @param id The HTTP DELETE method is used to delete a resource from the server
 	 */
-	
-	@DeleteMapping("/employee/{id}")
-	public HttpStatus deleteEmployeeEntity(@PathVariable long id) {
-		this.employeeServiceImpl.deleteEmployeeEntity(id);
-		return HttpStatus.OK;
+	@DeleteMapping("/{id}")
+	public ResponseEntity<EmployeeEntity> deleteEmployee(@PathVariable long id) {
+		employeeService.deleteEmployee(id);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	/**
+	 * Add address for Employee
+	 * 
+	 * @param Adds address sub resource for Employee resource
+	 */
+	@PostMapping("/{empid}/address")
+	public ResponseEntity<EmployeeEntity> addAddressForEmployee(@PathVariable("empid") Long empId,
+			@RequestBody AddressEntity addressEntity) {
+		employeeService.addAddressForEmployee(addressEntity, empId);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	/**
+	 * Add project for Employee
+	 * 
+	 * @param Adds project sub resource for Employee resource
+	 */
+	@PostMapping("/{empid}/project")
+	public ResponseEntity<ProjectEntity> createProjectForEmployee(@Valid @RequestBody ProjectEntity projectEntity,
+			@PathVariable Long empid) {
+		employeeService.createProjectForEmployee(projectEntity, empid);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	/**
+	 * Retrieves primary project of Employee
+	 * 
+	 * @return data from a server at the specified resource
+	 */
+	@GetMapping("/{empid}/project")
+	public ResponseEntity<List<ProjectEntity>> getProjects(@RequestParam("projectType") String prjType,
+			@PathVariable("empid") Long empId) {
+		return ResponseEntity.ok().body(employeeService.getProjects(prjType, empId));
 	}
 }

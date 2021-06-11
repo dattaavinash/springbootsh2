@@ -1,7 +1,7 @@
 package com.example.spdbconc.domain;
 
 public class Employee {
-
+ 
 	private Long id;
 
 	private String name;

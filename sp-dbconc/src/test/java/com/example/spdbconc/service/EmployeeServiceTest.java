@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import com.example.spdbconc.domain.entities.EmployeeEntity;
 import com.example.spdbconc.domain.repositories.EmployeeRepository;
 
@@ -27,9 +26,12 @@ public class EmployeeServiceTest {
 	@InjectMocks
 	private EmployeeServiceImpl employeeService;
 
+	/*
+	 * J unit for post method.
+	 */
 	@Test
 	@DisplayName("junit to test createEmployeeEntity")
-	public void testCreateEmployeeEntity() {
+	public void testCreateEmployee() {
 		EmployeeEntity employeeEntity = new EmployeeEntity();
 		employeeEntity.setId(21L);
 		employeeEntity.setName("athraya");
@@ -38,38 +40,67 @@ public class EmployeeServiceTest {
 
 		when(employeeRepository.save(employeeEntity)).thenReturn(employeeEntity);
 
-		EmployeeEntity createdEmployeeEntity = employeeService.createEmployeeEntity(employeeEntity);
+		EmployeeEntity createdEmployeeEntity = employeeService.createEmployee(employeeEntity);
 
 		assertEquals(createdEmployeeEntity.getId(), employeeEntity.getId());
 		assertEquals(createdEmployeeEntity.getName(), employeeEntity.getName());
 		assertEquals(createdEmployeeEntity.getCompany(), employeeEntity.getCompany());
 	}
 
+	/*
+	 * J unit for get method.
+	 */
 	@Test
 	@DisplayName("junit to test getEmployeeEnity")
-	public void testGetEmployeeEntity() {
-		EmployeeEntity widget1 = new EmployeeEntity(1l, "Widget Name", "Description", null);
-		EmployeeEntity widget2 = new EmployeeEntity(2l, "Widget 2 Name", "Description 2", null);
-		doReturn(Arrays.asList(widget1, widget2)).when(employeeRepository).findAll();
+	public void testGetEmployee() {
+		EmployeeEntity employee1 = new EmployeeEntity("avi", "tcs", "india",null, null);
+		EmployeeEntity employee2 = new EmployeeEntity("viswa", "Description 2", null,null, null);
+		doReturn(Arrays.asList(employee1, employee2)).when(employeeRepository).findAll();
 
-		// Execute the service call
-		List<EmployeeEntity> widgets = employeeService.getEmployeeEntity();
-
-		// Assert the response
-		assertEquals(2, widgets.size());
+		List<EmployeeEntity> employeeEntities = employeeService.getEmployee();
+		assertEquals(2, employeeEntities.size());
 
 	}
+
+	/*
+	 * J unit for get by Id method.
+	 */
 	@Test
 	@DisplayName("junit to test getEmployeeEntityById")
-	void testGetEmployeeEntityById() {
-        // Setup our mock repository
-        EmployeeEntity widget = new EmployeeEntity(1l, "Widget Name", "Description", null);
-        doReturn(Optional.of(widget)).when(employeeRepository).findById(1l);
+	void testGetEmployeeById() {
+		EmployeeEntity employee = new EmployeeEntity("avi", "tcs", "rome",null, null);
+		doReturn(Optional.of(employee)).when(employeeRepository).findById(null);
 
-        // Execute the service call
-        EmployeeEntity returnedWidget = employeeService.getEmployeeEntityById(1l);
+		EmployeeEntity employeeEntity = employeeService.getEmployeeById(null);
 
-        // Assert the response
-        assertEquals(1l, returnedWidget.getId());
-}
+		assertEquals(null, employeeEntity.getId());
+	}
+ 
+	/*
+	 * J unit for put method.
+	 */
+	@Test
+	@DisplayName("junit to test putEmployeeEntityB")
+	void testPutEmployee() {
+		EmployeeEntity employee = new EmployeeEntity("ram", "hp", "italy",null, null);
+		employee.setName("beard");
+		employee.setCompany("dell");
+		employee.setAddressentity(null);
+		doReturn(Optional.of(employee)).when(employeeRepository).findById(null);
+
+		EmployeeEntity employeeEntity = employeeService.updateEmployee(employee);
+
+		assertEquals("beard", employeeEntity.getName());
+	}
+
+	/*
+	 * J unit for delete method.
+	 */
+	@Test
+	public void testDeleteStudent() {
+		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "ghd", "france",null, null);
+		doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(3L);
+		String ee = employeeService.deleteEmployee(3L);
+		assertEquals("success", ee);
+	}
 }

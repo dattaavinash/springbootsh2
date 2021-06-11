@@ -3,34 +3,56 @@ package com.example.spdbconc.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.spdbconc.domain.entities.AddressEntity;
 import com.example.spdbconc.domain.entities.EmployeeEntity;
+import com.example.spdbconc.domain.entities.ProjectEntity;
 import com.example.spdbconc.domain.repositories.EmployeeRepository;
+import com.example.spdbconc.domain.repositories.ProjectRepository;
 
 /*
  * @Service class files are used to write business logic in a different layer
  */
 
 @Service
-@Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
 
+	@Autowired
+	private ProjectRepository projectRepository;
+
 	@Override
-	public EmployeeEntity createEmployeeEntity(EmployeeEntity employeeEntity) {
+	public EmployeeEntity createEmployee(EmployeeEntity employeeEntity) {
+
 		return employeeRepository.save(employeeEntity);
 	}
 
 	@Override
-	public EmployeeEntity updateEmployeeEntity(EmployeeEntity employeeEntity) {
-		Optional<EmployeeEntity> employeeDb = this.employeeRepository.findById(employeeEntity.getId());
+	public List<EmployeeEntity> getEmployee() {
+
+		return employeeRepository.findAll();
+	}
+
+	@Override
+	public EmployeeEntity getEmployeeById(Long employeeEntity) {
+		Optional<EmployeeEntity> employeeDb = employeeRepository.findById(employeeEntity);
+
+		if (employeeDb.isPresent()) {
+			EmployeeEntity employeeEntityUpdate = employeeDb.get();
+			return employeeEntityUpdate;
+		} else {
+			throw new ResourceNotFoundException("record not found with id : " + employeeEntity);
+		}
+	}
+
+	@Override
+	public EmployeeEntity updateEmployee(EmployeeEntity employeeEntity) {
+		Optional<EmployeeEntity> employeeDb = employeeRepository.findById(employeeEntity.getId());
 
 		if (employeeDb.isPresent()) {
 			EmployeeEntity employeeEntityUpdate = employeeDb.get();
@@ -46,32 +68,66 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public List<EmployeeEntity> getEmployeeEntity() {
-		return this.employeeRepository.findAll();
-	}
-
-	@Override
-	public EmployeeEntity getEmployeeEntityById(Long employeeEntity) {
-		Optional<EmployeeEntity> employeeDb = this.employeeRepository.findById(employeeEntity);
+	public String deleteEmployee(Long id) {
+		Optional<EmployeeEntity> employeeDb = employeeRepository.findById(id);
 
 		if (employeeDb.isPresent()) {
-			EmployeeEntity employeeEntityUpdate = employeeDb.get();
-			return employeeEntityUpdate;
-		} else {
-			throw new ResourceNotFoundException("record not found with id : " + employeeEntity);
-		}
-	}
-
-	@Override
-	public void deleteEmployeeEntity(Long id) {
-		Optional<EmployeeEntity> employeeDb = this.employeeRepository.findById(id);
-
-		if (employeeDb.isPresent()) {
-			this.employeeRepository.delete(employeeDb.get());
+			employeeRepository.delete(employeeDb.get());
+			return "success";
 		} else {
 			throw new ResourceNotFoundException("record not found with id : " + id);
 		}
 
+	}
+
+	public void addAddressForEmployee(AddressEntity addressEntity, Long empId) {
+		Optional<EmployeeEntity> ee = employeeRepository.findById(empId);
+		if (ee.isPresent()) {
+			// addressRepository.save(addressEntity);
+			EmployeeEntity employeeEntity = ee.get();
+			employeeEntity.setAddressentity(addressEntity);
+			addressEntity.setEmployeeEntity(employeeEntity);
+			employeeRepository.save(employeeEntity);
+		} else {
+			throw new ResourceNotFoundException("record not found with: " + empId);
+		}
+	}
+
+	@Override
+	public void createEmployeeForProject(EmployeeEntity employeeEntity, Long prjId) {
+		// TODO Auto-generated method stub
+
+		Optional<ProjectEntity> pe = projectRepository.findById(prjId);
+		if (pe.isPresent()) {
+			ProjectEntity projectEntity = pe.get();
+			projectEntity.setEmployeeEntity(employeeEntity);
+			projectRepository.save(projectEntity);
+		} else {
+			throw new ResourceNotFoundException("record not found with: " + prjId);
+		}
+	}
+
+	@Override
+	public List<ProjectEntity> getProjects(String prjType, Long empId) {
+		Optional<EmployeeEntity> ee = employeeRepository.findById(empId);
+		if (ee.isPresent()) {
+			List<ProjectEntity> pe = projectRepository.findEmployeeByProjectandtype(empId, prjType);
+			return pe;
+		} else {
+			throw new ResourceNotFoundException("record not found with: " + empId);
+		}
+	}
+
+	@Override
+	public void createProjectForEmployee(ProjectEntity projectEntity, Long empid) {
+		Optional<EmployeeEntity> ee = employeeRepository.findById(empid);
+		if (ee.isPresent()) {
+			EmployeeEntity employeeEntity = ee.get();
+			employeeEntity.addProject(projectEntity);
+			projectEntity.setEmployeeEntity(employeeEntity);
+			projectRepository.save(projectEntity);
+			employeeRepository.save(employeeEntity);
+		}
 	}
 
 }

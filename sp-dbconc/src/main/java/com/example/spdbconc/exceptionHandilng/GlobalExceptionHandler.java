@@ -20,9 +20,9 @@ public class GlobalExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 	}
-
+ 
 	// handle global exception
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<?> handleGlobalException(ResourceNotFoundException exception, WebRequest request) {
 
 		ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));

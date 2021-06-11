@@ -10,7 +10,7 @@ public class Address {
 	public Long getHouseNumber() {
 		return houseNumber;
 	}
-
+ 
 	public void setHouseNumber(Long houseNumber) {
 		this.houseNumber = houseNumber;
 	}

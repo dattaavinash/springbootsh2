@@ -1,3 +1,4 @@
+
 package com.example.spdbconc.domain.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;

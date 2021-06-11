@@ -22,54 +22,81 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("testing employee repository")
 
 public class EmployeeRepositoryTest {
-
+ 
 	@Autowired
 	private EmployeeRepository employeeRepository;
-	
+
+	/*
+	 * J unit test for get method
+	 */
 	@Test
-	@Sql(scripts="classpath:create-test-data.sql", executionPhase=ExecutionPhase.BEFORE_TEST_METHOD)
-	@Sql(scripts="classpath:cleanup-test-data.sql", executionPhase=ExecutionPhase.AFTER_TEST_METHOD)
+	@Sql(scripts = "classpath:create-test-data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(scripts = "classpath:cleanup-test-data.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 	@DisplayName("test findById")
-	void testGetEmployeeEntityById() {
-		Optional<EmployeeEntity> eeOptional=employeeRepository.findById(23L);
+	void testGetEmployeeById() {
+		Optional<EmployeeEntity> eeOptional = employeeRepository.findById(23L);
 		assertThat(eeOptional.isPresent()).isTrue();
-		EmployeeEntity ee=eeOptional.get();
+		EmployeeEntity ee = eeOptional.get();
 		assertThat(ee.getId()).isEqualTo(23L);
 	}
-	
+
 	@Test
 	@DisplayName("testing when Id not found")
-	void testGetEmployeeEntityById_NotFound() {
-		Optional<EmployeeEntity> eeOptional=employeeRepository.findById(23L);
+	void testGetEmployeeById_NotFound() {
+		Optional<EmployeeEntity> eeOptional = employeeRepository.findById(23L);
 		assertThat(eeOptional.isPresent()).isFalse();
 	}
-	
+
+	/*
+	 * J unit test for post method
+	 */
 	@Test
-	@Sql(scripts="classpath:create-test-data.sql", executionPhase=ExecutionPhase.BEFORE_TEST_METHOD)
-	@Sql(scripts="classpath:cleanup-test-data.sql", executionPhase=ExecutionPhase.AFTER_TEST_METHOD)
+	@Sql(scripts = "classpath:create-test-data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(scripts = "classpath:cleanup-test-data.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 	@DisplayName("test Save Id")
-	void testSaveEmployeeEntity() {
-		EmployeeEntity employeeEntity =createEmployeeEntity();
+	void testSaveEmployee() {
+		EmployeeEntity employeeEntity = createEmployee();
 		employeeRepository.save(employeeEntity);
-		Optional<EmployeeEntity> eeOptional=employeeRepository.findById(22l);
+		Optional<EmployeeEntity> eeOptional = employeeRepository.findByName("tcs");
 		assertThat(eeOptional.isPresent()).isTrue();
 	}
-	
-	private EmployeeEntity createEmployeeEntity() {
-		EmployeeEntity ee = new EmployeeEntity(22L,"tcs","ram",null);
+
+	private EmployeeEntity createEmployee() {
+		EmployeeEntity ee = new EmployeeEntity("tcs", "ram", "india",null,null); 
 		return ee;
 	}
-	
+
 	/*
-	 * @Test
-	 * 
-	 * @Sql(scripts="classpath:create-test-data.sql",
-	 * executionPhase=ExecutionPhase.BEFORE_TEST_METHOD)
-	 * 
-	 * @Sql(scripts="classpath:cleanup-test-data.sql",
-	 * executionPhase=ExecutionPhase.AFTER_TEST_METHOD)
-	 * 
-	 * @DisplayName("test update Id") void testUpdateEmployeeEntity() {
-	 * employeeRepository.updateEmployeeEntity() }
+	 * J unit test for put method
 	 */
+	@Test
+	@Sql(scripts = "classpath:create-test-data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(scripts = "classpath:cleanup-test-data.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@DisplayName("test update Id")
+	void testUpdateEmployee() {
+		EmployeeEntity employeeEntity = createEmployee();
+		employeeEntity.setName("alok");
+		employeeEntity.setCompany("vlos");
+		employeeEntity.setAddressentity(null);
+		employeeRepository.save(employeeEntity);
+		Optional<EmployeeEntity> eeOptional = employeeRepository.findByName("alok");
+		assertThat(eeOptional.isPresent()).isTrue();
+		EmployeeEntity ee = eeOptional.get();
+		assertThat(ee.getId()).isEqualTo(2L);
+	}
+
+
+	/*
+	 * J unit test for delete method
+	 */
+	@Test
+	@Sql(scripts = "classpath:create-test-data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+	@Sql(scripts = "classpath:cleanup-test-data.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+	@DisplayName("test delete Id")
+	void testDeleteEmployee() {
+		EmployeeEntity ee = createEmployee();
+		employeeRepository.delete(ee);
+		Optional<EmployeeEntity> eeOptional = employeeRepository.findByName("tcs");
+		assertThat(eeOptional.isPresent()).isFalse();
+	}
 }
