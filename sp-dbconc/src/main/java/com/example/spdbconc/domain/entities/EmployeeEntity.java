@@ -9,107 +9,84 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.example.spdbconc.validater.Phone;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /*
  * created table for Employee
  */
 @Entity
 @Table(name = "Employee")
+@NoArgsConstructor
 public class EmployeeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "EmployeeId")
+	@Getter
+	@Setter
 	private Long id;
 
 	@NotNull(message = "name should not be null")
 	@Size(min = 2, message = "Name atleast should have 2 characters")
 	@Column(name = "EmployeeName")
-	private String name;
+	@Getter
+	@Setter
+	String name;
 
 	@NotNull(message = "company should not be null")
 	@Size(min = 2, message = "Company atleast should have 2 characters")
 	@Column(name = "EmployeeCompany")
-	private String company;
+	@Getter
+	@Setter
+	String company;
 
-	@NotNull(message = "country should not be null")
-	@Size(min = 2, message = "Country atleast shoul have 2 characters")
-	@Column(name = "EmployeeCountry")
-	private String country;
+	@NotBlank(message = "Enter a phone number")
+	@Phone(message = "phone number is not valid")
+	@Column(name = "EmployeePhoneNumber")
+	@Getter
+	@Setter
+	String phoneNumber;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "employeeEntity")
-	private AddressEntity addressentity;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(referencedColumnName = "Housenumber", name = "Hno_id")
+	@Getter
+	@Setter
+	AddressEntity addressentity;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeEntity")
-	private List<ProjectEntity> projects = new ArrayList<>();
+	@Getter
+	List<ProjectEntity> projects = new ArrayList<>();
 
-	public EmployeeEntity(String name, String company, String country, AddressEntity addressentity,
+	public EmployeeEntity(String name, String company, String phoneNumber, AddressEntity addressentity,
 			List<ProjectEntity> projects) {
 		this.name = name;
 		this.company = company;
-		this.country = country;
+		this.phoneNumber = phoneNumber;
 		this.addressentity = addressentity;
 		this.projects = projects;
 	}
 
-	public EmployeeEntity() {
-
+	public void addProject(ProjectEntity projectEntity) {
+		this.projects.add(projectEntity);
 	}
 
-	public AddressEntity getAddressentity() {
-		return addressentity;
-	}
-
-	public void setAddressentity(AddressEntity addressentity) {
-		this.addressentity = addressentity;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCompany() {
-		return company;
-	}
-
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	public List<ProjectEntity> getProjects() {
-		return projects;
-	}
-
-	public void addProject(ProjectEntity project) {
-		this.projects.add(project);
+	public void setProjects(List<ProjectEntity> projects) {
+		this.projects = projects;
 	}
 
 	public void removeProject(ProjectEntity projects) {
 		this.projects.remove(projects);
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
 	}
 
 	@Override

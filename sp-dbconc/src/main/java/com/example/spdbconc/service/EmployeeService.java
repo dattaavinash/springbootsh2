@@ -21,12 +21,12 @@ public interface EmployeeService {
 	String deleteEmployee(Long id);
 	
 	void addAddressForEmployee(AddressEntity addressEntity,Long empId);
-	
-	void createEmployeeForProject(EmployeeEntity employeeEntity, Long prjId);
 
 	List<ProjectEntity> getProjects(String prjType, Long prjId);
 
-	void createProjectForEmployee(ProjectEntity projectEntity, Long empid);
+	void createProjectForEmployee(List<ProjectEntity> projectEntities, Long empid);
+	
+	List<ProjectEntity> getProjectsForEmp(Long empId);
 
 
 }

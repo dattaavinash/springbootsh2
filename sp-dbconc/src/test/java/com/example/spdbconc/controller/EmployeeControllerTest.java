@@ -70,7 +70,7 @@ public class EmployeeControllerTest {
 	@Test
 	@DisplayName("test for post method")
 	public void testCreateEmployee() throws Exception {
-		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "tcs", "india", null, null);
+		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "tcs", "9505315346", null, null);
 		Mockito.when(employeeService.createEmployee(any())).thenReturn(employeeEntity);
 
 		String postRequestBody = getJsonFormat(employeeEntity);
@@ -80,17 +80,17 @@ public class EmployeeControllerTest {
 		verify(employeeService, times(1)).createEmployee(employeeCaptor.capture());
 		assertEquals("avi", employeeCaptor.getValue().getName());
 		assertEquals("tcs", employeeCaptor.getValue().getCompany());
-		assertEquals("india", employeeCaptor.getValue().getCountry());
+		assertEquals("9505315346", employeeCaptor.getValue().getPhoneNumber());
 
 	}
 
 	@Test
 	@DisplayName("test for update method")
 	public void testUpdateEmployee() throws Exception {
-		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "tcs", "india", null, null);
+		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "tcs", "9505315346", null, null);
 		employeeEntity.setName("viswa");
 		employeeEntity.setCompany("dell");
-		employeeEntity.setCountry("rome");
+		//employeeEntity.setCountry("rome");
 		Mockito.when(employeeService.updateEmployee(any())).thenReturn(employeeEntity);
 		String putRequestBody = getJsonFormat(employeeEntity);
 		RequestBuilder requestBuilder = put("/employees/4").characterEncoding("UTF-8")
@@ -99,13 +99,13 @@ public class EmployeeControllerTest {
 		verify(employeeService, times(1)).updateEmployee(employeeCaptor.capture());
 		assertEquals("viswa", employeeCaptor.getValue().getName());
 		assertEquals("dell", employeeCaptor.getValue().getCompany());
-		assertEquals("rome", employeeCaptor.getValue().getCountry());
+		assertEquals("9505315346", employeeCaptor.getValue().getPhoneNumber());
 	}
 
 	@Test
 	@DisplayName("test for delete method")
 	public void testDeleteMethod() throws Exception {
-		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "tcs", "india", null, null);
+		EmployeeEntity employeeEntity = new EmployeeEntity("avi", "tcs", "9505315346", null, null);
 		Mockito.when(employeeService.deleteEmployee(anyLong())).thenReturn("success");
 
 		String deleteRequestBody = getJsonFormat(employeeEntity);

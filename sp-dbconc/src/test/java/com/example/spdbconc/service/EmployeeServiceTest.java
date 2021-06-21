@@ -35,7 +35,7 @@ public class EmployeeServiceTest {
 		EmployeeEntity employeeEntity = new EmployeeEntity();
 		employeeEntity.setId(21L);
 		employeeEntity.setName("athraya");
-		employeeEntity.setCompany("dell");
+		employeeEntity.setPhoneNumber("9505315346");
 		employeeEntity.setAddressentity(null);
 
 		when(employeeRepository.save(employeeEntity)).thenReturn(employeeEntity);
@@ -44,7 +44,7 @@ public class EmployeeServiceTest {
 
 		assertEquals(createdEmployeeEntity.getId(), employeeEntity.getId());
 		assertEquals(createdEmployeeEntity.getName(), employeeEntity.getName());
-		assertEquals(createdEmployeeEntity.getCompany(), employeeEntity.getCompany());
+		assertEquals(createdEmployeeEntity.getPhoneNumber(), employeeEntity.getPhoneNumber());
 	}
 
 	/*

@@ -28,7 +28,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public EmployeeEntity createEmployee(EmployeeEntity employeeEntity) {
-
 		return employeeRepository.save(employeeEntity);
 	}
 
@@ -59,6 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			employeeEntityUpdate.setId(employeeEntity.getId());
 			employeeEntityUpdate.setName(employeeEntity.getName());
 			employeeEntityUpdate.setCompany(employeeEntity.getCompany());
+			employeeEntityUpdate.setPhoneNumber(employeeEntity.getPhoneNumber());
 			employeeEntityUpdate.setAddressentity(employeeEntity.getAddressentity());
 			employeeRepository.save(employeeEntityUpdate);
 			return employeeEntityUpdate;
@@ -86,27 +86,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 			// addressRepository.save(addressEntity);
 			EmployeeEntity employeeEntity = ee.get();
 			employeeEntity.setAddressentity(addressEntity);
-			addressEntity.setEmployeeEntity(employeeEntity);
+			//addressEntity.setEmployeeEntity(employeeEntity);
 			employeeRepository.save(employeeEntity);
 		} else {
 			throw new ResourceNotFoundException("record not found with: " + empId);
 		}
 	}
-
-	@Override
-	public void createEmployeeForProject(EmployeeEntity employeeEntity, Long prjId) {
-		// TODO Auto-generated method stub
-
-		Optional<ProjectEntity> pe = projectRepository.findById(prjId);
-		if (pe.isPresent()) {
-			ProjectEntity projectEntity = pe.get();
-			projectEntity.setEmployeeEntity(employeeEntity);
-			projectRepository.save(projectEntity);
-		} else {
-			throw new ResourceNotFoundException("record not found with: " + prjId);
-		}
-	}
-
 	@Override
 	public List<ProjectEntity> getProjects(String prjType, Long empId) {
 		Optional<EmployeeEntity> ee = employeeRepository.findById(empId);
@@ -119,14 +104,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public void createProjectForEmployee(ProjectEntity projectEntity, Long empid) {
+	public void createProjectForEmployee(List<ProjectEntity> projectEntities, Long empid) {
 		Optional<EmployeeEntity> ee = employeeRepository.findById(empid);
 		if (ee.isPresent()) {
 			EmployeeEntity employeeEntity = ee.get();
-			employeeEntity.addProject(projectEntity);
-			projectEntity.setEmployeeEntity(employeeEntity);
-			projectRepository.save(projectEntity);
+
+			employeeEntity.setProjects(projectEntities);
+			for (ProjectEntity projectEntity : projectEntities) {
+				projectEntity.setEmployeeEntity(employeeEntity);
+			}
 			employeeRepository.save(employeeEntity);
+		}
+	}
+
+	@Override
+	public List<ProjectEntity> getProjectsForEmp(Long empId) {
+		Optional<EmployeeEntity> ee = employeeRepository.findById(empId);
+		if (ee.isPresent()) {
+			List<ProjectEntity> pe = projectRepository.findEmployeeByProject(empId);
+			return pe;
+		} else {
+			throw new ResourceNotFoundException("record not found with: " + empId);
 		}
 	}
 
