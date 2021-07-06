@@ -62,7 +62,7 @@ public class EmployeeRepositoryTest {
 	}
 
 	private EmployeeEntity createEmployee() {
-		EmployeeEntity ee = new EmployeeEntity("tcs", "ram", "9505315346",null,null); 
+		EmployeeEntity ee = new EmployeeEntity("tcs", "ram", "9505315346",null,null, null); 
 		return ee;
 	}
 

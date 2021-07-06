@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.spdbconc.domain.entities.AddressEntity;
+import com.example.spdbconc.domain.entities.BankDetails;
 import com.example.spdbconc.domain.entities.EmployeeEntity;
 import com.example.spdbconc.domain.entities.ProjectEntity;
 import com.example.spdbconc.service.EmployeeService;
+import com.example.spdbconc.service.MyFeignClient;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,15 +33,17 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/employees")
 @Slf4j
+
 class EmployeeController {
-	
-	//Logger logger = LoggerFactory.getLogger(EmployeeController.class);
-     
+	     
 	private EmployeeService employeeService;
 
 	public EmployeeController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
 	}
+	
+	@Autowired
+	private MyFeignClient myFeignClient;
 	
 	@GetMapping("/logger")
 	public String index() {
@@ -58,9 +63,9 @@ class EmployeeController {
 	 * @param employeeEntity create new subordinate resources
 	 */
 	@PostMapping
-	public ResponseEntity<EmployeeEntity> createEmployee(@Valid @RequestBody EmployeeEntity employeeEntity) {
+	public ResponseEntity<EmployeeEntity> createEmployee(@Valid @RequestBody EmployeeModel employeeModel) {
 		log.info("Post method is accessed");
-		return new ResponseEntity<>(employeeService.createEmployee(employeeEntity), HttpStatus.CREATED);
+		return new ResponseEntity<>(employeeService.createEmployee(employeeModel), HttpStatus.CREATED);
 
 	}
 
@@ -70,10 +75,11 @@ class EmployeeController {
 	 * @return data from a server at the specified resource
 	 */
 	@GetMapping
-	public ResponseEntity<List<EmployeeEntity>> getEmployee() {
+	public List<EmployeeEntity> getEmployee() {
 		log.info("Get method is accessed");
-		return ResponseEntity.ok().body(employeeService.getEmployee());
-	}
+		//BankDetails bankDetails = myFeignClient.getBankDetails();
+		return employeeService.getEmployee();
+				}
 
 	/**
 	 * Retrieves Employee by Employee Id
@@ -95,10 +101,10 @@ class EmployeeController {
 	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<EmployeeEntity> updateEmployee(@PathVariable long id,
-			@Valid @RequestBody EmployeeEntity employeeEntity) {
-		employeeEntity.setId(id);
+			@Valid @RequestBody EmployeeModel employeeModel) {
+		employeeModel.setEmpId(id);
 		log.info("Put method is accessed");
-		return ResponseEntity.ok().body(this.employeeService.updateEmployee(employeeEntity));
+		return ResponseEntity.ok().body(employeeService.updateEmployee(employeeModel));
 	}
 
 	/**
@@ -120,8 +126,9 @@ class EmployeeController {
 	 */
 	@PostMapping("/{empid}/address")
 	public ResponseEntity<EmployeeEntity> addAddressForEmployee(@PathVariable("empid") Long empId,
-			@RequestBody AddressEntity addressEntity) {
-		employeeService.addAddressForEmployee(addressEntity, empId);
+			@RequestBody AddressModel addressModel) {
+		log.info("Post method is accessed to add address for employee");
+		employeeService.addAddressForEmployee(addressModel, empId);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
@@ -131,15 +138,17 @@ class EmployeeController {
 	 * @param Adds project sub resource for Employee resource
 	 */
 	@PostMapping("/{empid}/projects")
-	public ResponseEntity<List<ProjectEntity>> createProjectForEmployee(@Valid @RequestBody List<ProjectEntity> projectEntity,
+	public ResponseEntity<List<ProjectEntity>> createProjectForEmployee(@Valid @RequestBody List<ProjectModel> projectModels,
 			@PathVariable Long empid) {
-		employeeService.createProjectForEmployee(projectEntity,empid);
+		log.info("Post method is accessed to add projects for employee");
+		employeeService.createProjectForEmployee(projectModels,empid);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@GetMapping("/{empid}/projects")
 	public ResponseEntity<List<ProjectEntity>> getProjectsForEmp(
 			@PathVariable("empid") Long empId) {
+		log.info("Get method is accessed to get projects for employee");
 		return ResponseEntity.ok().body(employeeService.getProjectsForEmp(empId));
 	}
 	/**
@@ -150,6 +159,7 @@ class EmployeeController {
 	@GetMapping("/{empid}/project")
 	public ResponseEntity<List<ProjectEntity>> getProjects(@RequestParam("projectType") String prjType,
 			@PathVariable("empid") Long empId) {
+		log.info("Get method is accessed to get projects of employee");
 		return ResponseEntity.ok().body(employeeService.getProjects(prjType, empId));
 	}
 }

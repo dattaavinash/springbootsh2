@@ -19,30 +19,24 @@ import lombok.Setter;
 @Entity
 @Table(name = "project")
 @NoArgsConstructor
+@Getter
+@Setter
 public class ProjectEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "project_id")
-	@Getter
-	@Setter
 	private Long projectId;
 
 	@Column(name = "Project_name")
-	@Getter
-	@Setter
 	private String projectName;
 
 	@Column(name = "project_type")
-	@Getter
-	@Setter
 	private String projectType;
 
 	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(referencedColumnName = "EmployeeId", name = "emp_id")
-	@Getter
-	@Setter
 	private EmployeeEntity employeeEntity;
 
 	public ProjectEntity(Long projectId, String projectName, String projectType, EmployeeEntity employeeEntity) {

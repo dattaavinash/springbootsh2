@@ -1,36 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
+<Configuration status="DEBUG">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout
-                pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <RollingFile name="RollingFile"
-            fileName="D:\files\logs"
-            filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+        <File name="LogToFile" fileName="D:/files/logs/spring.log">
             <PatternLayout>
-                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
             </PatternLayout>
-            <Policies>
-                <!-- rollover on startup, daily and when the file reaches 
-                    10 MegaBytes -->
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy
-                    size="10 MB" />
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
+        </File>
     </Appenders>
-
     <Loggers>
-        <!-- LOG everything at INFO level -->
-        <Root level="info">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="RollingFile" />
+        <Logger name="com.mkyong" level="debug" additivity="false">
+            <AppenderRef ref="LogToFile"/>
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Logger name="org.springframework.boot" level="error" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="LogToFile"/>
+            <AppenderRef ref="LogToConsole"/>
         </Root>
-
-        <!-- LOG "com.baeldung*" at TRACE level -->
-        <Logger name="com.baeldung" level="trace"></Logger>
     </Loggers>
-
 </Configuration>

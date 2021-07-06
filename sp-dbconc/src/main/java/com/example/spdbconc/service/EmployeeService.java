@@ -4,15 +4,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.spdbconc.domain.entities.AddressEntity;
+import com.example.spdbconc.controller.AddressModel;
+import com.example.spdbconc.controller.EmployeeModel;
+import com.example.spdbconc.controller.ProjectModel;
 import com.example.spdbconc.domain.entities.EmployeeEntity;
 import com.example.spdbconc.domain.entities.ProjectEntity;
 
 @Service
 public interface EmployeeService {
-	EmployeeEntity createEmployee(EmployeeEntity employeeEntity);
+	EmployeeEntity createEmployee(EmployeeModel employeeModel);
 
-	EmployeeEntity updateEmployee(EmployeeEntity employeeEntity);
+	EmployeeEntity updateEmployee(EmployeeModel employeeModel);
 
 	List<EmployeeEntity> getEmployee();
 
@@ -20,11 +22,11 @@ public interface EmployeeService {
 
 	String deleteEmployee(Long id);
 	
-	void addAddressForEmployee(AddressEntity addressEntity,Long empId);
+	void addAddressForEmployee(AddressModel addressModel,Long empId);
 
 	List<ProjectEntity> getProjects(String prjType, Long prjId);
 
-	void createProjectForEmployee(List<ProjectEntity> projectEntities, Long empid);
+	void createProjectForEmployee(List<ProjectModel> projectModels, Long empid);
 	
 	List<ProjectEntity> getProjectsForEmp(Long empId);
 
