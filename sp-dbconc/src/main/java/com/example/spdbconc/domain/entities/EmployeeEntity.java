@@ -48,10 +48,10 @@ public class EmployeeEntity {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeEntity")
 	List<ProjectEntity> projects = new ArrayList<>();
 	
-	private BankDetails bankdetails;
+	private String  bankdetails;
 
 	public EmployeeEntity(String name, String company, String phoneNumber, AddressEntity addressentity,
-			List<ProjectEntity> projects,BankDetails bankDetails) {
+			List<ProjectEntity> projects,String bankDetails) {
 		this.name = name;
 		this.company = company;
 		this.phoneNumber = phoneNumber;
@@ -77,5 +77,4 @@ public class EmployeeEntity {
 		return "Employee{" + "id = " + this.id + "," + "name = " + this.name + "," + " company = " + this.company + ","
 				+ " PhoneNumber = " + this.phoneNumber + "}";
 	}
-
 }

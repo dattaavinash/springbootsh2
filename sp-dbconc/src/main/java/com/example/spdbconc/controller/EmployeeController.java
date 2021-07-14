@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,12 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.spdbconc.domain.entities.BankDetails;
 import com.example.spdbconc.domain.entities.EmployeeEntity;
 import com.example.spdbconc.domain.entities.ProjectEntity;
 import com.example.spdbconc.service.EmployeeService;
-import com.example.spdbconc.service.MyFeignClient;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -42,8 +37,7 @@ class EmployeeController {
 		this.employeeService = employeeService;
 	}
 	
-	@Autowired
-	private MyFeignClient myFeignClient;
+
 	
 	@GetMapping("/logger")
 	public String index() {
@@ -61,9 +55,10 @@ class EmployeeController {
 	 * Create Employee
 	 * 
 	 * @param employeeEntity create new subordinate resources
+	 * @throws Exception 
 	 */
 	@PostMapping
-	public ResponseEntity<EmployeeEntity> createEmployee(@Valid @RequestBody EmployeeModel employeeModel) {
+	public ResponseEntity<EmployeeEntity> createEmployee(@Valid @RequestBody EmployeeModel employeeModel) throws Exception {
 		log.info("Post method is accessed");
 		return new ResponseEntity<>(employeeService.createEmployee(employeeModel), HttpStatus.CREATED);
 
