@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import com.example.spdbconc.controller.AddressModel;
 import com.example.spdbconc.controller.EmployeeModel;
@@ -35,32 +33,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private AddressMapper addressMapper;
 
 	private ProjectMapper projectMapper;
-	
+
 	private MyFeignClient myFeignClient;
-	
-	private int count=0;
 
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository, ProjectRepository projectRepository,
-			EmployeeMapper employeeMapper, AddressMapper addressMapper, ProjectMapper projectMapper,MyFeignClient myFeignClient) {
+			EmployeeMapper employeeMapper, AddressMapper addressMapper, ProjectMapper projectMapper,
+			MyFeignClient myFeignClient) {
 		this.employeeRepository = employeeRepository;
 		this.projectRepository = projectRepository;
 		this.employeeMapper = employeeMapper;
 		this.addressMapper = addressMapper;
 		this.projectMapper = projectMapper;
-		this.myFeignClient=  myFeignClient;
+		this.myFeignClient = myFeignClient;
 	}
 
 	@Override
-	@Retryable(value = RuntimeException.class,maxAttempts = 4)
-	public EmployeeEntity createEmployee(EmployeeModel employeeModel)  {
-		count++;
-		System.out.println("trying to call feign client");
-		if(count==4)
-		{
-			throw new YourException("unable to call after three attempts");
-		}
-		else
-		{
+	public EmployeeEntity createEmployee(EmployeeModel employeeModel) {
 		EmployeeEntity employeeEntity = employeeMapper.map(employeeModel, EmployeeEntity.class);
 		List<ProjectEntity> projectEntities = employeeEntity.getProjects();
 		AddressEntity addressEntity = employeeEntity.getAddressentity();
@@ -75,23 +63,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 			}
 		}
 		try {
-		  String bankDetails = myFeignClient.getBankDetails();
-		  employeeEntity.setBankdetails(bankDetails);
-		}
-		catch (Exception e) {
+			String bankDetails = myFeignClient.getBankDetails();
+			employeeEntity.setBankdetails(bankDetails);
+		} catch (Exception e) {
 			throw new YourException("unable to call the Rest Api feign client", e);
-			}  
+		}
 		return employeeRepository.save(employeeEntity);
-		
-		}
-		}
-	
-	//@Override
-	@Recover
-	public String recover() {
-		return "try after sometime";
+
 	}
-	
+
 	@Override
 	public List<EmployeeEntity> getEmployee() {
 
@@ -104,8 +84,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		if (employeeDb.isPresent()) {
 			EmployeeEntity employeeEntityUpdate = employeeDb.get();
-			//BankDetails bankDetails = myFeignClient.getBankDetails();
-			return  employeeEntityUpdate;
+			// BankDetails bankDetails = myFeignClient.getBankDetails();
+			return employeeEntityUpdate;
 		} else {
 			throw new ResourceNotFoundException("record not found with id : " + employeeEntity);
 		}

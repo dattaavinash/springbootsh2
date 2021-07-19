@@ -2,7 +2,6 @@ package com.example.spdbconc.service;
 
 import java.util.List;
 
-import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 
 import com.example.spdbconc.controller.AddressModel;
@@ -22,9 +21,6 @@ public interface EmployeeService {
 	EmployeeEntity getEmployeeById(Long employeeEntity);
 
 	String deleteEmployee(Long id);
-	
-	@Recover
-	public String recover();
 	
 	void addAddressForEmployee(AddressModel addressModel,Long empId);
 
